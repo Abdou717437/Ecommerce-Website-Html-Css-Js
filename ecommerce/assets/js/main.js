@@ -109,5 +109,79 @@ window.addEventListener('scroll',scrollUp);
 
 /*=============== QUESTIONS ACCORDION ===============*/
 
+const accordionItem = document.querySelectorAll('.questions__item');
+
+accordionItem.forEach((item) => {
+    const accordionHeader = item.querySelector('.questions__header');
+
+    accordionHeader.addEventListener('click', () => {
+        const openItem = document.querySelector('.accordion-open');
+
+        toggleItem(item)
+
+        if(openItem && openItem !== item)
+            toggleItem(openItem)
+    })
+})
+
+const toggleItem = (item) => {
+    const accordionContent = item.querySelector('.questions__content');
+
+    if(item.classList.contains('accordion-open')){
+        accordionContent.removeAttribute('style')
+        item.classList.remove('accordion-open')
+    }
+    else{
+        accordionContent.style.height = accordionContent.scrollHeight + 'px';
+        item.classList.add('accordion-open')
+    }
+    
+   
+}
 
 /*=============== STYLE SWITCHER ===============*/
+
+const styleSwitcherToggle = document.querySelector('.style__switcher-toggler');
+styleSwitcherToggle.addEventListener('click',()=> {
+    document.querySelector(".style__switcher").classList.toggle("open");
+})
+
+//HIDE STYLE SWITCHER ON SCROLL
+window.addEventListener("scroll",()=>{
+    if(document.querySelector('.style__switcher').classList.contains('open')){
+        document.querySelector(".style__switcher").classList.remove("open");
+    }
+})
+
+//THEME COLORS
+function themeColors(){
+    const   colorStyle = document.querySelector('.js-color-style'),
+            themeColorContainer = document.querySelector('.js-theme-colors');
+            themeColorContainer.addEventListener('click', ({target})=> {
+                if(target.classList.contains('js-theme-color-item')){
+                    localStorage.setItem("color",target.getAttribute('data-js-theme-color'));
+                    setColors();
+                }
+            })
+    function setColors(){
+        let path = colorStyle.getAttribute('href').split("/");
+        path = path.slice(0, path.length - 1);
+        colorStyle.setAttribute('href',path.join("/") + "/" + localStorage.getItem("color") + ".css")
+
+        if(document.querySelector(".js-theme-color-item.active")){
+            document.querySelector(".js-theme-color-item.active").classList.remove("active");
+        }
+        document.querySelector("[data-js-theme-color=" + localStorage.getItem("color") + "]").classList.add("active");
+    }  
+
+    if(localStorage.getItem("color") !== null){
+        setColors();
+    }else{
+        const defaultColor = colorStyle.getAttribute("href").split("/").pop().split(".").shift();
+        document.querySelector("[data-js-theme-color" + defaultColor + "]").classList.add("active");
+    }
+}
+
+
+
+themeColors();
